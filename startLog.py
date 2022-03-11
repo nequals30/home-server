@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
-from datetime import date
+from datetime import datetime
 
-f = open("logs/" + str(date.today()) + "_log.html","w") # make this a relative path in config file
-f.write("<html><body>test of logging functionality</body</html>")
+absolutePath = ""
+
+now = datetime.now()
+f = open(absolutePath + "logs/" + now.strftime("%Y-%m-%d") + "_log.html","w") 
+f.write("<html><body>")
+f.write("Log started on " + now.strftime("%A, %B %d at %-I:%M %p"))
+f.write("</body</html>")
 f.close()
