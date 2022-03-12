@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 from subprocess import check_output,call
+from datetime import datetime
+import fileinput
 
+absolutePath = ""
+
+now = datetime.now()
+logPath = absolutePath + "logs/" + now.strftime("%Y-%m-%d") + "_log.md"
+for line in fileinput.input(logPath,inplace=True):
+    print(line.replace("| x | localBackup | HAS NOT RUN |","|" + now.strftime("%-I:%M %p") + "| localBackup | it ran |"),end='')
+
+"""
 # overhead
 maxSize = 2e9
 
@@ -19,3 +29,4 @@ if nBytes < maxSize:
     print(res)
 else:
     print("Aborting transfer! Transfer amount bigger than " + str(maxSize/1e9) + " GB. (trying to transfer " + str(nBytes/1e9) + " GB)")
+"""
