@@ -5,14 +5,26 @@ from datetime import datetime
 import fileinput
 
 absolutePath = ""
-
 now = datetime.now()
 logPath = absolutePath + "logs/" + now.strftime("%Y-%m-%d") + "_log.md"
-for line in fileinput.input(logPath,inplace=True):
-    print(line.replace("| x | localBackup | HAS NOT RUN |","|" + now.strftime("%-I:%M %p") + "| localBackup | it ran |"),end='')
+
+try:
+    # bulk of code (should be its own file, while the rest of this code is a generic wrapper for any script)
+    # --------------------
+    raise Exception("guaranteed error")
+    # --------------------
+
+    # write success
+    for line in fileinput.input(logPath,inplace=True):
+        print(line.replace("| x | localBackup | HAS NOT RUN |",
+            "|" + now.strftime("%-I:%M %p") + "| localBackup | it ran |"),end='')
+except Exception as e:
+    # write error
+    for line in fileinput.input(logPath,inplace=True):
+        print(line.replace("| x | localBackup | HAS NOT RUN |"
+            ,"|" + now.strftime("%-I:%M %p") + "| localBackup | ERROR: " + str(e) + "|"),end='')
 
 """
-# overhead
 maxSize = 2e9
 
 # check how many bytes would be transferred
