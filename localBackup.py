@@ -17,7 +17,7 @@ try:
     # --------------------
     pathToMainDrive = ""
     pathToBackup = ""
-    maxDiff = 2 # gigabytes
+    maxDiff = 20 # gigabytes
 
     # make sure both directories have trailing slashes
     if not (pathToMainDrive.endswith("/") and pathToBackup.endswith("/")):
@@ -34,26 +34,42 @@ try:
     stats_back = os.statvfs(pathToBackup)
     used_main = (stats_main.f_frsize * (stats_main.f_blocks - stats_main.f_bfree))/1e9
     used_back = (stats_back.f_frsize * (stats_back.f_blocks - stats_back.f_bfree))/1e9
+    space_back = (stats_back.f_frsize * stats_back.f_blocks)/1e9
     if abs(used_main - used_back) > maxDiff:
         raise Exception("Drives are different by more than " + str(maxDiff) + "GB. Main drive has " + str(round(used_main,2)) + "GB, backup has " + str(round(used_back,2)) + "GB")
     else:
         successMessage = "main: " + str(round(used_main,2)) + "GB, backup: " + str(round(used_back,2)) + "GB. "
 
+    # check that there is enough space on the destination drive
+    if used_main > (space_back):
+        raise Exception("Not enough space on destination. Source has " + str(round(used_main,2)) + "GB of data, destination has " + str(round(space_back,2)) + "GB of space")
+
     # check rsync dry-run
     res = check_output(["rsync","--dry-run","--exclude=lost+found/","--archive","--delete","--stats",pathToMainDrive,pathToBackup])
     res = res.decode("utf-8")
-    # to do: check if dry-run succeeded
     for line in res.split('\n'):
         if 'Total transferred file size: ' in line:
             nBytes = int(line[line.find(': ')+2:line.rfind(' bytes')].strip().replace(",",""))
-        # to do, pull out stats on created, deleted
     if abs(nBytes/1e9) > maxDiff:
         raise Exception("Dry-run transferring " + str(round(nBytes/1e9,2)) + "GB (more than " + str(maxDiff) + "GB limit)")
-    else:
-        successMessage = successMessage + "dry-run: " + str(round(nBytes/1e9,2)) + " GB"
 
     # run actual rsync
-    
+    res = check_output(["rsync","--exclude=lost+found/","--archive","--delete","--stats",pathToMainDrive,pathToBackup])
+    res = res.decode("utf-8")
+    for line in res.split('\n'):
+        if 'Total transferred file size: ' in line:
+            nBytes = int(line[line.find(': ')+2:line.rfind(' bytes')].strip().replace(",",""))
+        if 'Number of created files: ' in line:
+            nAddFiles = line[line.find(': ')+2:len(line)].strip().replace(",","")
+            if '(' in nAddFiles:
+                nAddFiles = nAddFiles[0:nAddFiles.rfind('(')].strip()
+        if 'Number of deleted files: ' in line:
+            nDelFiles = line[line.find(': ')+2:len(line)].strip().replace(",","")
+            if '(' in nDelFiles:
+                nDelFiles = nDelFiles[0:nDelFiles.rfind('(')].strip()
+
+    successMessage = successMessage + "rsync added: " + nAddFiles + " files, deleted: " + nDelFiles + " files, transfer: " + str(round(nBytes/1e9,2)) + " GB"
+
     # --------------------
 
     # write success
