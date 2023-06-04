@@ -4,8 +4,8 @@
 import os
 from subprocess import check_output,call
 
-from datetime import datetime # for logging
-import fileinput # for logging
+from datetime import datetime
+import fileinput 
 
 # overhead for logging
 absolutePath = ""

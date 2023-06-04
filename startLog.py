@@ -6,7 +6,7 @@ absolutePath = ""
 
 now = datetime.now()
 f = open(absolutePath + "logs/" + now.strftime("%Y-%m-%d") + "_log.md","w")
-f.write("# Log for " + now.strftime("%A, %B %d, %Y") + "\n")
+f.write("### Log for " + now.strftime("%A, %B %d, %Y") + "\n")
 f.write("|Time | Task | Message |\n")
 f.write("| --- | ---  | ---     |\n")
 f.write("|" + now.strftime("%-I:%M %p") + " | startLog | wrote this log |\n")
