@@ -3,21 +3,22 @@
 
 import os
 from subprocess import check_output,call
-
 from datetime import datetime
 import fileinput 
 
-# overhead for logging
-absolutePath = ""
+# find the logs directory
+curDir = os.path.dirname(os.path.realpath(__file__))
+logDir = os.path.join(curDir,'logs')
+os.makedirs(logDir, exist_ok=True) # in case it doesn't exist
 now = datetime.now()
-logPath = absolutePath + "logs/" + now.strftime("%Y-%m-%d") + "_log.md"
+logPath = os.path.join(logDir,now.strftime("%Y-%m-%d") + "_log.md")
 
 try:
     # bulk of code (should be its own file, while the rest of this code is a generic wrapper for any script)
     # --------------------
     pathToMainDrive = ""
     pathToBackup = ""
-    maxDiff = 20 # gigabytes
+    maxDiff = 30 # gigabytes
 
     # make sure both directories have trailing slashes
     if not (pathToMainDrive.endswith("/") and pathToBackup.endswith("/")):

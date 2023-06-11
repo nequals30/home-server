@@ -1,16 +1,24 @@
+#!/usr/bin/env python3
+#-*- coding: utf-8 -*-
+
+import os
 import markdown
 import datetime
 
-absolutePath = ""
-outPath = "result.html"
 nDays = 10
 
 now = datetime.datetime.now()
 out = ""
 
+# find the logs directory
+curDir = os.path.dirname(os.path.realpath(__file__))
+logDir = os.path.join(curDir,'logs')
+os.makedirs(logDir, exist_ok=True) # in case it doesn't exist
+
+# iterate through the last n days and write logs
 for i in range(nDays):
     thisDate = now - datetime.timedelta(days=i)
-    logPath = absolutePath + "logs/" + thisDate.strftime("%Y-%m-%d") + "_log.md"
+    logPath = os.path.join(logDir,thisDate.strftime("%Y-%m-%d") + "_log.md")
     try:
         with open(logPath, 'r') as md_file:
             md_content = md_file.read()
@@ -37,5 +45,6 @@ css = """
 """
 
 # Write the HTML content to a file
+outPath = os.path.join(curDir,"result.html")
 with open(outPath, 'w') as html_file:
     html_file.write(css + out)
