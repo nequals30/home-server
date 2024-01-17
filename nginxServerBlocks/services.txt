@@ -1,0 +1,2 @@
+service1.mydomain.com | 5000
+service2.mydomain.com | 5001
