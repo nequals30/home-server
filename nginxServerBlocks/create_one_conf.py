@@ -17,9 +17,11 @@ def create_one_conf(domain, port, write_to_file):
     subdomain = domain.split('.')[0]
     conf_file_path = f"{out_path}/{subdomain}.conf"
 
-    if subdomain=="docker":
+    if subdomain=="docker" or subdomain=="3d":
         websocket = """proxy_set_header Upgrade $http_upgrade;
             \tproxy_set_header Connection "upgrade";"""
+        if subdomain=="3d":
+            websocket = websocket + "\n\t\tproxy_http_version 1.1;"
     else:
         websocket = ""
 
