@@ -17,6 +17,12 @@ def create_one_conf(domain, port, write_to_file):
     subdomain = domain.split('.')[0]
     conf_file_path = f"{out_path}/{subdomain}.conf"
 
+    if subdomain=="docker":
+        websocket = """proxy_set_header Upgrade $http_upgrade;
+            \tproxy_set_header Connection "upgrade";"""
+    else:
+        websocket = ""
+
     conf_contents = f"""
 server {{
     listen 80;
@@ -48,6 +54,7 @@ server {{
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
+                {websocket}
         }}
 }}
 """
