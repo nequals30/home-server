@@ -1,19 +1,27 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
+
 from datetime import datetime
 import os
 
-absolutePath = ""
+# read the config file
+config = {}
+with open("config.txt","r") as file:
+    for line in file:
+        k, v = line.strip().split("=",1)
+        k = k.strip()
+        v = v.strip()
+        config[k] = v
 
 # find the logs directory
-curDir = os.path.dirname(os.path.realpath(__file__))
-logDir = os.path.join(curDir,'logs')
-os.makedirs(logDir, exist_ok=True) # in case it doesn't exist
+log_path = config.get("log_path","./logs/") # default to ./logs/
+os.makedirs(log_path, exist_ok=True) # make it if it doesnt exist
 
 # write log
 now = datetime.now()
-logPath = os.path.join(logDir,now.strftime("%Y-%m-%d") + "_log.md")
-f = open(logPath,"w")
+log_path = os.path.join(log_path,now.strftime("%Y-%m-%d") + "_log.md")
+print(log_path)
+f = open(log_path,"w")
 f.write("### Log for " + now.strftime("%A, %B %d, %Y") + "\n")
 f.write("|Time | Task | Message |\n")
 f.write("| --- | ---  | ---     |\n")
