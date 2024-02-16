@@ -5,22 +5,28 @@ import os
 import markdown
 import datetime
 
-nDays = 10
+# read the config file
+config = {}
+with open("config.txt","r") as file:
+    for line in file:
+        k, v = line.strip().split("=",1)
+        k = k.strip()
+        v = v.strip()
+        config[k] = v
 
-now = datetime.datetime.now()
-out = ""
-
-# find the logs directory
-curDir = os.path.dirname(os.path.realpath(__file__))
-logDir = os.path.join(curDir,'logs')
-os.makedirs(logDir, exist_ok=True) # in case it doesn't exist
+# interpert the configuration
+log_dir = config.get("log_directory","./logs/")
+n_days = int(config.get("html_n_days_history","10"))
+out_path = config.get("html_out_path","./result.html")
 
 # iterate through the last n days and write logs
-for i in range(nDays):
+now = datetime.datetime.now()
+out = ""
+for i in range(n_days):
     thisDate = now - datetime.timedelta(days=i)
-    logPath = os.path.join(logDir,thisDate.strftime("%Y-%m-%d") + "_log.md")
+    this_log_path = os.path.join(log_dir,thisDate.strftime("%Y-%m-%d") + "_log.md")
     try:
-        with open(logPath, 'r') as md_file:
+        with open(this_log_path, 'r') as md_file:
             md_content = md_file.read()
         out = out + markdown.markdown(md_content, extensions=['tables'])
     except FileNotFoundError:
@@ -45,6 +51,5 @@ css = """
 """
 
 # Write the HTML content to a file
-outPath = os.path.join(curDir,"result.html")
-with open(outPath, 'w') as html_file:
+with open(out_path, 'w') as html_file:
     html_file.write(css + out)
