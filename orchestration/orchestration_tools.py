@@ -11,4 +11,8 @@ def run_script(script_folder, script_name):
     sys.path.append(script_dir)
     this_module = import_module(script_name)
     message = this_module.main()
-    print(message)
+
+    # log the script
+    sys.path.append("../01_logger/")
+    import logger_tools
+    logger_tools.log_entry(script_name,message)

@@ -8,9 +8,9 @@ import logger_tools
 def main():
     # read the config file
     config = logger_tools.read_config()
-
-    # find the logs directory
     log_path = config.get("log_directory")
+
+    # make the logs folder if it doesnt exist
     os.makedirs(log_path, exist_ok=True)
 
     # write log
@@ -20,8 +20,9 @@ def main():
     f.write("### Log for " + now.strftime("%A, %B %d, %Y") + "\n")
     f.write("|Time | Task | Message |\n")
     f.write("| --- | ---  | ---     |\n")
-    f.write("|" + now.strftime("%-I:%M %p") + " | startLog | wrote this log |\n")
-    f.write("| x | localBackup | HAS NOT RUN |\n")
+    f.write("| X | start_log | HAS NOT RUN |\n")
+    f.write("| X | localBackup | HAS NOT RUN |\n")
+    f.write("| X | end_write_logs | HAS NOT RUN |\n")
     f.close()
     return "Wrote this log with X scripts"
 

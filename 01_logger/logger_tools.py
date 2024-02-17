@@ -2,6 +2,8 @@
 #-*- coding: utf-8 -*-
 
 import os
+from datetime import datetime
+import fileinput 
 
 def read_config():
     # read the config file
@@ -23,3 +25,18 @@ def read_config():
             config[field] = os.path.join(this_dir, this_path)
 
     return config
+
+
+def log_entry(script_name, message):
+    # read the config file
+    config = read_config()
+    log_path = config.get("log_directory")
+
+    # open the MD file
+    now = datetime.now()
+    log_path = os.path.join(log_path,now.strftime("%Y-%m-%d") + "_log.md")
+
+    # find the right row to replace
+    for line in fileinput.input(log_path, inplace=True):
+        print(line.replace("| X | " + script_name + " | HAS NOT RUN |",
+            "|" + now.strftime("%-I:%M %p") + "| " + script_name + " | " + message + " |"),end='')

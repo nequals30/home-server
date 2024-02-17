@@ -7,10 +7,8 @@ import datetime
 import logger_tools
 
 def main():
-
+    # read the config file
     config = logger_tools.read_config()
-
-    # interpert the configuration
     log_dir = config.get("log_directory")
     out_path = config.get("html_out_path")
     n_days = int(config.get("html_n_days_history","10"))
