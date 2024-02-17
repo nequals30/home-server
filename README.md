@@ -11,7 +11,7 @@ MY CRONTAB
 ```
 
 ### 1. Logger
-This creates a markdown file with a placeholder for each script run by cron. As scripts run, it logs their success or error message. At the end, it gets turned into an HTML page that is hosted on my server, so I can see how things went.
+This creates a markdown file with a placeholder for each script run by cron. As scripts run, it logs their success or error messages. At the end, it gets turned into an HTML page that is hosted on my server, so I can see how things went.
 
 ### 2. Local Backup
 This incrementally copies everything from my main hard drive onto my backup drive. Since using `rsync` with the `--delete` flag is scary, this script has a bunch of guard-rails around things that could go wrong.
