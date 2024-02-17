@@ -21,7 +21,7 @@ def main():
     f.write("|Time | Task | Message |\n")
     f.write("| --- | ---  | ---     |\n")
     f.write("| X | start_log | HAS NOT RUN |\n")
-    f.write("| X | localBackup | HAS NOT RUN |\n")
+    f.write("| X | local_backup | HAS NOT RUN |\n")
     f.close()
     return "Wrote this log with X scripts"
 
