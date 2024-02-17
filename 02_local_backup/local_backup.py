@@ -18,7 +18,7 @@ def main():
 
     pathToMainDrive = config.get("main_directory")
     pathToBackup = config.get("backup_directory")
-    maxDiff = int(config.get("max_diff"))
+    maxDiff = int(config.get("max_diff_gb"))
 
     # make sure the file paths are absolute
     if (not os.path.isabs(pathToMainDrive)) or (not os.path.isabs(pathToBackup)):
@@ -79,13 +79,3 @@ def main():
 
 if __name__ == "__main__":
     print(main())
-
-"""
-# do transfer if it is OK, otherwise abort and send error
-print(str(nBytes/1e9) + " GB to be transferred")
-if nBytes < maxSize:
-    res = call(["rsync","--exclude=lost+found/","--archive","--delete","/mnt/smallssd/","/mnt/bigDrive/"])
-    print(res)
-else:
-    print("Aborting transfer! Transfer amount bigger than " + str(maxSize/1e9) + " GB. (trying to transfer " + str(nBytes/1e9) + " GB)")
-"""
