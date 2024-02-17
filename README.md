@@ -7,7 +7,9 @@ The numbered scripts run automatically via cron, while the utility scripts are r
 ## Scheduled Scripts
 The scheduled scripts run out of the `orchestration` folder, and my crontab looks like this:
 ```
-MY CRONTAB
+00 01 * * * /path/to/home-server/orchestration/s01_start_log.py
+30 01 * * * /path/to/home-server/orchestration/s02_local_backup.py
+00 02 * * * /path/to/home-server/orchestration/s99_end_write_logs.py
 ```
 
 ### 1. Logger
