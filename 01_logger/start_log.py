@@ -22,7 +22,6 @@ def main():
     f.write("| --- | ---  | ---     |\n")
     f.write("| X | start_log | HAS NOT RUN |\n")
     f.write("| X | localBackup | HAS NOT RUN |\n")
-    f.write("| X | end_write_logs | HAS NOT RUN |\n")
     f.close()
     return "Wrote this log with X scripts"
 

@@ -1,0 +1,3 @@
+main_directory = UNSPECIFIED
+backup_directory = UNSPECIFIED
+max_diff_gb = 30

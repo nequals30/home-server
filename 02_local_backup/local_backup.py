@@ -3,22 +3,26 @@
 
 import os
 from subprocess import check_output,call
-from datetime import datetime
-import fileinput 
 
-# find the logs directory
-curDir = os.path.dirname(os.path.realpath(__file__))
-logDir = os.path.join(curDir,'logs')
-os.makedirs(logDir, exist_ok=True) # in case it doesn't exist
-now = datetime.now()
-logPath = os.path.join(logDir,now.strftime("%Y-%m-%d") + "_log.md")
+def main():
+    # read the config file
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(this_dir,'config.txt')
+    config = {}
+    with open(config_path,"r") as file:
+        for line in file:
+            k, v = line.strip().split("=",1)
+            k = k.strip()
+            v = v.strip()
+            config[k] = v
 
-try:
-    # bulk of code (should be its own file, while the rest of this code is a generic wrapper for any script)
-    # --------------------
-    pathToMainDrive = ""
-    pathToBackup = ""
-    maxDiff = 30 # gigabytes
+    pathToMainDrive = config.get("main_directory")
+    pathToBackup = config.get("backup_directory")
+    maxDiff = int(config.get("max_diff"))
+
+    # make sure the file paths are absolute
+    if (not os.path.isabs(pathToMainDrive)) or (not os.path.isabs(pathToBackup)):
+        raise Exception("drive paths must be absolute")
 
     # make sure both directories have trailing slashes
     if not (pathToMainDrive.endswith("/") and pathToBackup.endswith("/")):
@@ -71,21 +75,12 @@ try:
 
     successMessage = successMessage + "rsync added: " + nAddFiles + " files, deleted: " + nDelFiles + " files, transfer: " + str(round(nBytes/1e9,2)) + " GB"
 
-    # --------------------
+    return successMessage
 
-    # write success
-    for line in fileinput.input(logPath,inplace=True):
-        print(line.replace("| x | localBackup | HAS NOT RUN |",
-            "|" + now.strftime("%-I:%M %p") + "| localBackup | " + successMessage + " |"),end='')
-except Exception as e:
-    # write error
-    for line in fileinput.input(logPath,inplace=True):
-        print(line.replace("| x | localBackup | HAS NOT RUN |"
-            ,"|" + now.strftime("%-I:%M %p") + "| localBackup | ERROR: " + str(e) + "|"),end='')
+if __name__ == "__main__":
+    print(main())
 
 """
-
-
 # do transfer if it is OK, otherwise abort and send error
 print(str(nBytes/1e9) + " GB to be transferred")
 if nBytes < maxSize:

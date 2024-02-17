@@ -10,9 +10,12 @@ def run_script(script_folder, script_name):
     script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', script_folder))
     sys.path.append(script_dir)
     this_module = import_module(script_name)
-    message = this_module.main()
+    try:
+        message = this_module.main()
+    except Exception as e:
+        message = str(e)
 
-    # log the script
+    # log the message
     sys.path.append("../01_logger/")
     import logger_tools
     logger_tools.log_entry(script_name,message)
