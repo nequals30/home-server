@@ -16,6 +16,6 @@ def run_script(script_folder, script_name):
         message = str(e)
 
     # log the message
-    sys.path.append("../01_logger/")
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '01_logger')))
     import logger_tools
     logger_tools.log_entry(script_name,message)
