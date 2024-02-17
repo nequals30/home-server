@@ -3,25 +3,15 @@
 
 from datetime import datetime
 import os
+import logger_tools
 
 def main():
     # read the config file
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(this_dir,'config.txt')
-    config = {}
-    with open(config_path,"r") as file:
-        for line in file:
-            k, v = line.strip().split("=",1)
-            k = k.strip()
-            v = v.strip()
-            config[k] = v
+    config = logger_tools.read_config()
 
     # find the logs directory
-    log_path_default = os.path.join(this_dir,'./logs/') # default to ./logs/
-    log_path = config.get("log_directory",log_path_default)
-    if (log_path[:2] == "./") or (log_path[:3] == "../"):
-        log_path = this_dir + "/" + log_path
-    os.makedirs(log_path, exist_ok=True) # make it if it doesnt exist
+    log_path = config.get("log_directory")
+    os.makedirs(log_path, exist_ok=True)
 
     # write log
     now = datetime.now()

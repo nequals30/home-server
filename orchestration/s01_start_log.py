@@ -3,4 +3,4 @@
 
 from orchestration_tools import run_script
 
-run_script('01_logger','start_log','startLog')
+run_script('01_logger','start_log')
