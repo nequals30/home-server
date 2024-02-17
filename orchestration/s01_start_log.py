@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-import os
-import runpy
+from orchestration_tools import run_script
 
-script_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '01_logger'))
-os.chdir(script_dir)
-runpy.run_path('start_log.py')
+run_script('01_logger','start_log','startLog')
