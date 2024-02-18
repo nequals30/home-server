@@ -1,0 +1,1 @@
+stacks_directory = /path/to/stacks/
