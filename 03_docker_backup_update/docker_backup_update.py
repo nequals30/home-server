@@ -5,6 +5,7 @@ import os
 import subprocess
 
 def main():
+
     # read the config file
     this_dir = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(this_dir,'config.txt')
@@ -35,6 +36,9 @@ def main():
                 down_stack(stack)
                 print("stack down: " + this_stack_name)
 
+                # read through backup file, and backup selected volumes
+                backup_stack(stack)
+
                 # update stack
                 update_stack(stack)
                 print("update stack: " + this_stack_name)
@@ -57,6 +61,19 @@ def main():
 
 def down_stack(stack_path):
     subprocess.run("docker compose down", shell=True, cwd=stack_path)
+
+def backup_stack(stack_path):
+    # read through backup file
+    backup_file_path = os.path.join(stack_path, "backup.txt")
+    backup_volumes = []
+    with open(backup_file_path,"r") as file:
+        for line in file:
+            if ":" in line:
+                k, v = line.strip().split(":",1)
+                if k.lower() == "backup".lower():
+                    backup_volumes.append(v.strip())
+
+    print(backup_volumes)
 
 def update_stack(stack_path):
     subprocess.run("docker compose pull", shell=True, cwd=stack_path)
