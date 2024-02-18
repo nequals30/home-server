@@ -64,6 +64,7 @@ def down_stack(stack_path):
 
 def backup_stack(stack_path):
     # read through backup file
+    message = ""
     backup_file_path = os.path.join(stack_path, "backup.txt")
     backup_volumes = []
     with open(backup_file_path,"r") as file:
@@ -73,7 +74,14 @@ def backup_stack(stack_path):
                 if k.lower() == "backup".lower():
                     backup_volumes.append(v.strip())
 
-    print(backup_volumes)
+    # back up each volume with rsync
+    for vol in backup_volumes:
+       volume_path = os.path.join(stack_path, vol)
+       if not os.path.exists(volume_path):
+           message = message + "NO SUCH PATH: " + str(volume_path)
+       else:
+           print("backing up " + str(volume_path)
+    print("message")
 
 def update_stack(stack_path):
     subprocess.run("docker compose pull", shell=True, cwd=stack_path)
