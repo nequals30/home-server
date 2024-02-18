@@ -34,18 +34,16 @@ def main():
             try:
                 # down stack
                 down_stack(stack)
-                print("stack down: " + this_stack_name)
 
                 # read through backup file, and backup selected volumes
-                backup_stack(stack)
+                message_backup = backup_stack(stack)
+                message = message + message_backup
 
                 # update stack
                 update_stack(stack)
-                print("update stack: " + this_stack_name)
 
                 # up stack
                 up_stack(stack)
-                print("stack back up: " + this_stack_name)
 
                 n_good = n_good + 1
 
@@ -64,7 +62,6 @@ def down_stack(stack_path):
 
 def backup_stack(stack_path):
     # read through backup file
-    message = ""
     backup_file_path = os.path.join(stack_path, "backup.txt")
     backup_volumes = []
     with open(backup_file_path,"r") as file:
@@ -75,13 +72,19 @@ def backup_stack(stack_path):
                     backup_volumes.append(v.strip())
 
     # back up each volume with rsync
+    message = ""
+    n_volumes_good = 0
     for vol in backup_volumes:
        volume_path = os.path.join(stack_path, vol)
        if not os.path.exists(volume_path):
-           message = message + "NO SUCH PATH: " + str(volume_path)
+           message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
        else:
-           print("backing up " + str(volume_path)
-    print("message")
+           print("backing up " + str(volume_path))
+           n_volumes_good = n_volumes_good + 1
+
+    message = message + f"successfully rsynced {n_volumes_good} volumes\n"
+
+    return message
 
 def update_stack(stack_path):
     subprocess.run("docker compose pull", shell=True, cwd=stack_path)
