@@ -20,13 +20,23 @@ def main():
     if not os.path.isabs(stacks_directory):
         raise Exception("Stacks directory must be absolute")
 
-    # down the stacks
-    all_stack_paths = [ f.path for f in os.scandir(stacks_directory) if f.is_dir() ]
-    for stack in all_stack_dirs:
-        result = subprocess.run("pwd", shell=True, cwd=stack, capture_output=True, text=True)
-        print(result)
+    # loop through each stack
+    message = ""
+    n_good = 0
+    all_stack_paths = [ f.path for f in os.scandir(stacks_directory) \
+            if f.is_dir() and f.name!='.git' ]
+    for stack in all_stack_paths:
+        backup_file_path = os.path.join(stack, "backup.txt")
+        if os.path.exists(backup_file_path):
+            print(f"{os.path.basename(stack)}: yes")
+            n_good = n_good + 1
+        else:
+            print(f"{os.path.basename(stack)}: no")
+            message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
-    return "success message"
+    # output message
+    message = f"successfully backed up {n_good} stacks\n" + message
+    return message
 
 if __name__ == "__main__":
     print(main())
