@@ -27,16 +27,27 @@ def main():
     all_stack_paths = [ f.path for f in os.scandir(stacks_directory) \
             if f.is_dir() and f.name!='.git' ]
     for stack in all_stack_paths:
+        this_stack_name = os.path.basename(stack)
         backup_file_path = os.path.join(stack, "backup.txt")
         if os.path.exists(backup_file_path):
-            # down stack
-            down_stack(stack)
-            print("stack down")
+            try:
+                # down stack
+                down_stack(stack)
+                print("stack down: " + this_stack_name)
 
-            # up stack
-            up_stack(stack)
-            print("stack back up")
-            n_good = n_good + 1
+                # update stack
+                update_stack(stack)
+                print("update stack: " + this_stack_name)
+
+                # up stack
+                up_stack(stack)
+                print("stack back up: " + this_stack_name)
+
+                n_good = n_good + 1
+
+            except Exception as e:
+                message = message + "FAILURE on " + this_stack_name + \
+                        ": " + str(e) + "\n"
         else:
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
@@ -46,6 +57,9 @@ def main():
 
 def down_stack(stack_path):
     subprocess.run("docker compose down", shell=True, cwd=stack_path)
+
+def update_stack(stack_path):
+    subprocess.run("docker compose pull", shell=True, cwd=stack_path)
 
 def up_stack(stack_path):
     subprocess.run("docker compose up -d", shell=True, cwd=stack_path)
