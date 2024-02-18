@@ -2,6 +2,7 @@
 #-*- coding: utf-8 -*-
 
 import os
+import subprocess
 
 def main():
     # read the config file
@@ -28,15 +29,26 @@ def main():
     for stack in all_stack_paths:
         backup_file_path = os.path.join(stack, "backup.txt")
         if os.path.exists(backup_file_path):
-            print(f"{os.path.basename(stack)}: yes")
+            # down stack
+            down_stack(stack)
+            print("stack down")
+
+            # up stack
+            up_stack(stack)
+            print("stack back up")
             n_good = n_good + 1
         else:
-            print(f"{os.path.basename(stack)}: no")
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
     # output message
     message = f"successfully backed up {n_good} stacks\n" + message
     return message
+
+def down_stack(stack_path):
+    subprocess.run("docker compose down", shell=True, cwd=stack_path)
+
+def up_stack(stack_path):
+    subprocess.run("docker compose up -d", shell=True, cwd=stack_path)
 
 if __name__ == "__main__":
     print(main())
