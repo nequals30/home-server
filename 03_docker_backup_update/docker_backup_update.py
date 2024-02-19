@@ -84,18 +84,15 @@ def backup_stack(stack_path, backup_destination):
         elif not (os.listdir(volume_path)):
             message = message + "CANT BACKUP, VOLUME IS EMPTY: " + str(volume_path) + "\n"
         else:
-            command = "rsync --archive --delete " + volume_path + " " + backup_destination
+            command = ['rsync', '--archive', '--delete', \
+                    volume_path, backup_destination]
             try:
-                result = subprocess.run(command, check=True, \
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                print("rsync command executed successfully.")
-                print(result.stdout.decode())
+                subprocess.run(command, check=True, shell=True)
+                n_volumes_good = n_volumes_good + 1
 
             except subprocess.CalledProcessError as e:
                 print("rsync failed")
                 print(result.stderr.decode())
-
-            n_volumes_good = n_volumes_good + 1
 
     message = message + f"successfully rsynced {n_volumes_good} volumes\n"
 
