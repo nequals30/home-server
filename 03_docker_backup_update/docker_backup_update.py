@@ -24,11 +24,12 @@ def main():
         raise Exception("Stacks directory must be absolute")
     # Todo: check that the backup destination is a path and directory
 
-    # loop through each stack
+    # pre-allocate result message variables
     message = ""
     n_good_stacks = 0
     n_good_volumes = 0
 
+    # loop through each stack
     all_stack_paths = [ f.path for f in os.scandir(stacks_directory) \
             if f.is_dir() and f.name!='.git' ]
     for stack in all_stack_paths:
@@ -68,7 +69,7 @@ def down_stack(stack_path):
 
 def backup_stack(stack_path, backup_destination):
 
-    # read through backup file
+    # read through backup configuration file
     backup_file_path = os.path.join(stack_path, "backup.txt")
     backup_volumes = []
     with open(backup_file_path,"r") as file:
@@ -83,11 +84,15 @@ def backup_stack(stack_path, backup_destination):
     n_volumes_good = 0
     for vol in backup_volumes:
         volume_path = os.path.join(stack_path, vol)
+        
+        # potential errors
         if not os.path.exists(volume_path):
             message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
         elif not (os.listdir(volume_path)):
             message = message + "CANT BACKUP, VOLUME IS EMPTY: " + str(volume_path) + "\n"
         else:
+
+            # call to rsync
             this_stack_name = os.path.basename(stack_path)
             this_destination = os.path.join(backup_destination, this_stack_name)
             command = ['rsync', '--archive', '--delete', \
