@@ -3,6 +3,7 @@
 
 import os
 import subprocess
+import re
 
 def main():
 
@@ -64,7 +65,7 @@ def main():
     message_prune = prune()
 
     # output message
-    message = message + f"Ran through {n_good_stacks}.\nBacked up {n_good_volumes} volumes (X GB).\n {message_prune}"
+    message = message + f"Ran through {n_good_stacks} stacks.\nBacked up {n_good_volumes} volumes (X GB).\n{message_prune}"
     return message
 
 def down_stack(stack_path):
@@ -123,9 +124,8 @@ def prune():
     if result.returncode == 0:
         output = result.stdout
 
-
         pruned_images_count = len(re.findall(r'deleted: ', output))
-        message = f"Pruned {pruned_images_count} images ")
+        message = f"Pruned {pruned_images_count} images "
 
         space_freed_match = re.search( \
                 r'Total reclaimed space: (\d+(\.\d+)?[a-zA-Z]+)', output)
