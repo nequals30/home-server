@@ -56,7 +56,7 @@ def main():
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
     # output message
-    message = message + f"Ran through {n_good} stacks"
+    message = message + f"Sucessfully ran through {n_good} stacks"
     return message
 
 def down_stack(stack_path):
@@ -88,16 +88,15 @@ def backup_stack(stack_path, backup_destination):
             this_destination = os.path.join(backup_destination, this_stack_name)
             command = ['rsync', '--archive', '--delete', \
                     volume_path, this_destination]
-            print(' '.join(command))
             try:
-                subprocess.run(command, check=True, shell=True)
+                subprocess.run(command, check=True, stderr=subprocess.PIPE)
                 n_volumes_good = n_volumes_good + 1
 
             except subprocess.CalledProcessError as e:
-                print("rsync failed")
-                print(result.stderr.decode())
+                message = message + "RSYNC FAILED: " + e.stderr.decode() + "\n"
 
-    message = message + f"successfully rsynced {n_volumes_good} volumes\n"
+
+    message = message + f"Successfully rsynced {n_volumes_good} volumes\n"
 
     return message
 
