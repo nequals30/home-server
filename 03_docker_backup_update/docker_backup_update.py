@@ -18,9 +18,9 @@ def main():
             v = v.strip()
             config[k] = v
 
-    # get the stacks directory
     stacks_directory = config.get("stacks_directory")
     backup_destination = config.get("backup_destination_directory")
+    username = config.get("username")
     if not os.path.isabs(stacks_directory):
         raise Exception("Stacks directory must be absolute")
     # Todo: check that the backup destination is a path and directory
@@ -71,7 +71,7 @@ def main():
 def down_stack(stack_path):
     subprocess.run("docker compose down", shell=True, cwd=stack_path)
 
-def backup_stack(stack_path, backup_destination):
+def backup_stack(stack_path, backup_destination, username):
 
     # read through backup configuration file
     backup_file_path = os.path.join(stack_path, "backup.txt")
@@ -103,10 +103,17 @@ def backup_stack(stack_path, backup_destination):
                     volume_path, this_destination]
             try:
                 subprocess.run(command, check=True, stderr=subprocess.PIPE)
-                n_volumes_good = n_volumes_good + 1
 
             except subprocess.CalledProcessError as e:
                 message = message + "RSYNC FAILED: " + e.stderr.decode() + "\n"
+
+            # chown the backed up volume
+            command = ['chown', '-R', username+":"+username, this_destination]
+            try:
+                subprocess.run(command, check=True)
+                n_volumes_good = n_volumes_good + 1
+            except subprocess.CalledProcessError as e:
+                message = message + f"CHOWN FAILED AFTER RSYNC: {e}" + "\n"
 
     return message, n_volumes_good
 
