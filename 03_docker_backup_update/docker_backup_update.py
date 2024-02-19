@@ -56,7 +56,7 @@ def main():
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
     # output message
-    message = message + f"successfully backed up {n_good} stacks"
+    message = message + f"Ran through {n_good} stacks"
     return message
 
 def down_stack(stack_path):
@@ -78,14 +78,24 @@ def backup_stack(stack_path, backup_destination):
     message = ""
     n_volumes_good = 0
     for vol in backup_volumes:
-       volume_path = os.path.join(stack_path, vol)
-       if not os.path.exists(volume_path):
-           message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
-       elif not (os.listdir(volume_path):
-           message = message + "CANT BACKUP, VOLUME IS EMPTY: " + str(volume_path) + "\n"
-       else:
-           print("rsync --archive --delete " + volume_path + " " + backup_destination)
-           n_volumes_good = n_volumes_good + 1
+        volume_path = os.path.join(stack_path, vol)
+        if not os.path.exists(volume_path):
+            message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
+        elif not (os.listdir(volume_path)):
+            message = message + "CANT BACKUP, VOLUME IS EMPTY: " + str(volume_path) + "\n"
+        else:
+            command = "rsync --archive --delete " + volume_path + " " + backup_destination
+            try:
+                result = subprocess.run(command, check=True, \
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                print("rsync command executed successfully.")
+                print(result.stdout.decode())
+
+            except subprocess.CalledProcessError as e:
+                print("rsync failed")
+                print(result.stderr.decode())
+
+            n_volumes_good = n_volumes_good + 1
 
     message = message + f"successfully rsynced {n_volumes_good} volumes\n"
 
