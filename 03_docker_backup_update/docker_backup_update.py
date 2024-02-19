@@ -60,8 +60,11 @@ def main():
         else:
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
+    # clean up unused images
+    message_prune = prune()
+
     # output message
-    message = message + f"Ran through {n_good_stacks}.\nBacked up {n_good_volumes} volumes (X GB).\n Pruned X containers (X GB)"
+    message = message + f"Ran through {n_good_stacks}.\nBacked up {n_good_volumes} volumes (X GB).\n {message_prune}"
     return message
 
 def down_stack(stack_path):
@@ -112,6 +115,31 @@ def update_stack(stack_path):
 def up_stack(stack_path):
     subprocess.run("docker compose up -d", shell=True, cwd=stack_path)
     # Note: would be good to have it message whether there were updates
+
+def prune():
+    command = ["docker", "image", "prune", "-f"]
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode == 0:
+        output = result.stdout
+
+
+        pruned_images_count = len(re.findall(r'deleted: ', output))
+        message = f"Pruned {pruned_images_count} images ")
+
+        space_freed_match = re.search( \
+                r'Total reclaimed space: (\d+(\.\d+)?[a-zA-Z]+)', output)
+        if space_freed_match:
+            space_freed = space_freed_match.group(0)
+            message = message + f"({space_freed})"
+        else:
+            message = message + "(UNKNOWN SPACE FREED)"
+
+    else:
+        message = "PRUNE UNSUCCESSFUL"
+
+    return message
+
 
 if __name__ == "__main__":
     print(main())
