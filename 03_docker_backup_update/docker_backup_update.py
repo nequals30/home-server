@@ -54,7 +54,7 @@ def main():
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
     # output message
-    message = f"successfully backed up {n_good} stacks\n" + message
+    message = message + f"successfully backed up {n_good} stacks"
     return message
 
 def down_stack(stack_path):
@@ -80,6 +80,7 @@ def backup_stack(stack_path):
            message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
        else:
            print("backing up " + str(volume_path))
+           print("rsync --archive --delete " + volume_path + "/path/to/destination")
            n_volumes_good = n_volumes_good + 1
 
     message = message + f"successfully rsynced {n_volumes_good} volumes\n"
@@ -91,6 +92,7 @@ def update_stack(stack_path):
 
 def up_stack(stack_path):
     subprocess.run("docker compose up -d", shell=True, cwd=stack_path)
+    # Note: would be good to have it message whether there were updates
 
 if __name__ == "__main__":
     print(main())
