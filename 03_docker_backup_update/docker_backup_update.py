@@ -65,7 +65,7 @@ def main():
     message_prune = prune()
 
     # output message
-    message = message + f"Ran through {n_good_stacks} stacks.\nBacked up {n_good_volumes} volumes (X GB).\n{message_prune}"
+    message = message + f"Ran through {n_good_stacks} stacks. Backed up {n_good_volumes} volumes (X GB). {message_prune}"
     return message
 
 def down_stack(stack_path):
