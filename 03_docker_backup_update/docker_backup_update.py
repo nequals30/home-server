@@ -81,11 +81,9 @@ def backup_stack(stack_path, backup_destination):
        volume_path = os.path.join(stack_path, vol)
        if not os.path.exists(volume_path):
            message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
+       elif not (os.listdir(volume_path):
+           message = message + "CANT BACKUP, VOLUME IS EMPTY: " + str(volume_path) + "\n"
        else:
-           # check that the volume is not empty
-           v_stats = os.statvfs(volume_path)
-           v_size = (v_stats.f_frsize * (v_stats.f_blocks - v_stats.f_bfree))/1e9
-           print(f"{vol} size is {str(v_size)} GB")
            print("rsync --archive --delete " + volume_path + " " + backup_destination)
            n_volumes_good = n_volumes_good + 1
 
