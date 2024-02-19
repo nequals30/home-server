@@ -61,7 +61,7 @@ def main():
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
     # output message
-    message = message + f"Backed up {n_good_volumes} volumes across {n_good_stacks} stacks"
+    message = message + f"Ran through {n_good_stacks}.\nBacked up {n_good_volumes} volumes (X GB).\n Pruned X containers (X GB)"
     return message
 
 def down_stack(stack_path):
