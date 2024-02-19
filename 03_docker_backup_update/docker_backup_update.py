@@ -26,7 +26,9 @@ def main():
 
     # loop through each stack
     message = ""
-    n_good = 0
+    n_good_stacks = 0
+    n_good_volumes = 0
+
     all_stack_paths = [ f.path for f in os.scandir(stacks_directory) \
             if f.is_dir() and f.name!='.git' ]
     for stack in all_stack_paths:
@@ -38,8 +40,10 @@ def main():
                 down_stack(stack)
 
                 # read through backup file, and backup selected volumes
-                message_backup = backup_stack(stack, backup_destination)
+                message_backup, this_n_volumes = \
+                        backup_stack(stack, backup_destination)
                 message = message + message_backup
+                n_good_volumes = n_good_volumes + this_n_volumes
 
                 # update stack
                 update_stack(stack)
@@ -47,7 +51,7 @@ def main():
                 # up stack
                 up_stack(stack)
 
-                n_good = n_good + 1
+                n_good_stacks = n_good_stacks + 1
 
             except Exception as e:
                 message = message + "FAILURE on " + this_stack_name + \
@@ -56,7 +60,7 @@ def main():
             message = message + f"WARNING: {os.path.basename(stack)} doesn't have a backup.txt\n"
 
     # output message
-    message = message + f"Sucessfully ran through {n_good} stacks"
+    message = message + f"Backed up {n_good_volumes} across {n_good_stacks} stacks"
     return message
 
 def down_stack(stack_path):
@@ -95,10 +99,7 @@ def backup_stack(stack_path, backup_destination):
             except subprocess.CalledProcessError as e:
                 message = message + "RSYNC FAILED: " + e.stderr.decode() + "\n"
 
-
-    message = message + f"Successfully rsynced {n_volumes_good} volumes\n"
-
-    return message
+    return message, n_volumes_good
 
 def update_stack(stack_path):
     subprocess.run("docker compose pull", shell=True, cwd=stack_path)
