@@ -1,1 +1,2 @@
 stacks_directory = /path/to/stacks/
+backup_destination_directory = /path/to/destination/

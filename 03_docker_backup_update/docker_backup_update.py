@@ -19,8 +19,10 @@ def main():
 
     # get the stacks directory
     stacks_directory = config.get("stacks_directory")
+    backup_destination = config.get("backup_destination_directory")
     if not os.path.isabs(stacks_directory):
         raise Exception("Stacks directory must be absolute")
+    # Todo: check that the backup destination is a path and directory
 
     # loop through each stack
     message = ""
@@ -36,7 +38,7 @@ def main():
                 down_stack(stack)
 
                 # read through backup file, and backup selected volumes
-                message_backup = backup_stack(stack)
+                message_backup = backup_stack(stack, backup_destination)
                 message = message + message_backup
 
                 # update stack
@@ -60,7 +62,8 @@ def main():
 def down_stack(stack_path):
     subprocess.run("docker compose down", shell=True, cwd=stack_path)
 
-def backup_stack(stack_path):
+def backup_stack(stack_path, backup_destination):
+
     # read through backup file
     backup_file_path = os.path.join(stack_path, "backup.txt")
     backup_volumes = []
@@ -79,8 +82,11 @@ def backup_stack(stack_path):
        if not os.path.exists(volume_path):
            message = message + "CANT BACKUP, NO SUCH PATH: " + str(volume_path) + "\n"
        else:
-           print("backing up " + str(volume_path))
-           print("rsync --archive --delete " + volume_path + "/path/to/destination")
+           # check that the volume is not empty
+           v_stats = os.statvfs(volume_path)
+           v_size = (v_stats.f_frsize * (v_stats.f_blocks - v_stats.f_bfree))/1e9
+           print(f"{vol} size is {str(v_size)} GB")
+           print("rsync --archive --delete " + volume_path + " " + backup_destination)
            n_volumes_good = n_volumes_good + 1
 
     message = message + f"successfully rsynced {n_volumes_good} volumes\n"
