@@ -43,7 +43,7 @@ def main():
 
                 # read through backup file, and backup selected volumes
                 message_backup, this_n_volumes = \
-                        backup_stack(stack, backup_destination)
+                        backup_stack(stack, backup_destination, username)
                 message = message + message_backup
                 n_good_volumes = n_good_volumes + this_n_volumes
 

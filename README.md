@@ -9,6 +9,7 @@ The scheduled scripts run out of the `orchestration` folder, and my crontab look
 ```
 00 01 * * * /path/to/home-server/orchestration/s01_start_log.py
 30 01 * * * /path/to/home-server/orchestration/s02_local_backup.py
+...
 00 02 * * * /path/to/home-server/orchestration/s99_end_write_logs.py
 ```
 
@@ -17,6 +18,9 @@ This creates a markdown file with a placeholder for each script run by cron. As 
 
 ### 2. Local Backup
 This incrementally copies everything from my main hard drive onto my backup drive. Since using `rsync` with the `--delete` flag is scary, this script has a bunch of guard-rails around things that could go wrong.
+
+### 3. Docker Backup/Update
+Loops through a bunch of docker stacks, updates them, and backs up specific volumes to a specified directory, and prunes unused images.
 
 ---
 ## Utilities

@@ -21,7 +21,8 @@ def create_one_conf(domain, port, write_to_file):
         websocket = """proxy_set_header Upgrade $http_upgrade;
             \tproxy_set_header Connection "upgrade";"""
         if subdomain=="3d":
-            websocket = websocket + "\n\t\tproxy_http_version 1.1;"
+            websocket = websocket + "\n\t\t\t\tproxy_http_version 1.1;"
+            websocket = websocket + "\n\t\t\t\tclient_max_body_size 1G;"
     else:
         websocket = ""
 
