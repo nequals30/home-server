@@ -5,9 +5,9 @@ This script loops through a bunch of docker stacks, updates them, and backs up s
 It's configured via the `config.txt` file in this folder, as follows:
 
 ```
-stacks_directory = /path/to/stacks/						# loops through all stacks in this folder
-backup_destination_directory = /path/to/destination/	# backs up volumes to here
-username = user											# chowns them as this user
+stacks_directory = /path/to/stacks/                     # loops through all stacks in this folder
+backup_destination_directory = /path/to/destination/    # backs up volumes to here
+username = user                                         # chowns them as this user
 ```
 
 ### backup.txt
