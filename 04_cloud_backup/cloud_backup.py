@@ -53,8 +53,18 @@ def main():
     for subdir in exclude_list:
         command.extend(["--exclude", f"{backup_path}{subdir}"])
 
-    print(command)
-    return "success or fail"
+    message = ""
+
+    # dry run first and process results
+
+    # actually run command
+    try:
+        subprocess.run(command, check=True)
+        message = message + "Backup completed successfully."
+    except subprocess.CalledProcessError as e:
+        message = message + f"FAILED WITH ERROR: {e}"
+
+    return message
 
 def get_pass_entry(entry_name):
     try:
@@ -62,7 +72,6 @@ def get_pass_entry(entry_name):
     except subprocess.CalledProcessError as e:
         print(f"Failed to retrieve {entry_name} from pass: {e}")
         return None
-
 
 if __name__ == "__main__":
     print(main())
