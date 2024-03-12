@@ -1,1 +1,2 @@
 backup_path = /path/you/want/backed/up/
+exclude_subdirs = dir1/, dir2/, dir3/

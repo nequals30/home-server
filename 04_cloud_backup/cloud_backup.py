@@ -40,12 +40,20 @@ def main():
     os.environ['B2_ACCOUNT_KEY'] = get_pass_entry(f"{hn}/B2_ACCOUNT_KEY")
     os.environ['RESTIC_PASSWORD'] = get_pass_entry(f"{hn}/RESTIC_PASSWORD")
 
-    temp_cmd = f"restic backup {backup_path} --compression max --exclude-caches --one-file-system --cleanup-cache"
+    # build up restic backup command
+    command = [
+        "restic",
+        "backup",
+        backup_path,
+        "--compression", "max",
+        "--exclude-caches",
+        "--one-file-system",
+        "--cleanup-cache"
+    ]
     for subdir in exclude_list:
-        temp_cmd += f" --exclude {backup_path}{subdir}"
+        command.extend(["--exclude", f"{backup_path}{subdir}"])
 
-    print(temp_cmd)
-
+    print(command)
     return "success or fail"
 
 def get_pass_entry(entry_name):
