@@ -16,6 +16,11 @@ def main():
                 domain = parts[0].strip()
                 port = parts[1].strip()
                 conf = create_one_conf(domain, int(port), True)
+            elif len(parts) ==3:
+                domain = parts[0].strip()
+                port = parts[1].strip()
+                host = parts[2].strip()
+                conf = create_one_conf(domain, int(port), True, host=host)
             else:
                 print(f"Skipping invalid line: {line.strip()}")
 

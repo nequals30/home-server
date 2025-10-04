@@ -11,17 +11,21 @@ this will actually write it to the file:
 ./create_one_conf.py service.mydomain.com 5002 --write
 """
 
-def create_one_conf(domain, port, write_to_file):
+def create_one_conf(domain, port, write_to_file, host="localhost"):
     out_path = "output_confs/"
 
     subdomain = domain.split('.')[0]
     conf_file_path = f"{out_path}/{subdomain}.conf"
 
-    if subdomain=="docker" or subdomain=="3d":
-        websocket = """proxy_set_header Upgrade $http_upgrade;
-            \tproxy_set_header Connection "upgrade";"""
-        if subdomain=="3d":
-            websocket = websocket + "\n\t\t\t\tproxy_http_version 1.1;"
+
+    if subdomain in ("docker", "3d", "home"):
+        websocket = (
+                "proxy_http_version 1.1;\n"
+                "\t\t\t\tproxy_set_header Upgrade $http_upgrade;\n"
+                "\t\t\t\tproxy_set_header Connection \"upgrade\";"
+                            
+        )
+        if subdomain == "3d":
             websocket = websocket + "\n\t\t\t\tclient_max_body_size 1G;"
     else:
         websocket = ""
@@ -52,7 +56,7 @@ server {{
         ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
 
         location / {{
-                proxy_pass http://localhost:{port}/;
+                proxy_pass http://{host}:{port}/;
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -74,10 +78,11 @@ def main():
     parser.add_argument('domain', type=str, help='Domain name for the service')
     parser.add_argument('port', type=int, help='Port number where the service is running')
     parser.add_argument('--write', action='store_true', help='Writes output to file instead of printing it')
+    parser.add_argument('--host', type=str, default="localhost", help='Backent host/IP to proxy to (default: localhost)')
     
     args = parser.parse_args()
 
-    conf = create_one_conf(args.domain, args.port, args.write)
+    conf = create_one_conf(args.domain, args.port, args.write, host=args.host)
     if not(args.write):
         print(conf)
 
